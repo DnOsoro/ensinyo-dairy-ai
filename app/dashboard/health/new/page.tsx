@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import SubmitButton from "./SubmitButton";
 
 type Farm = {
   id: string;
@@ -15,7 +16,16 @@ type Cow = {
   breed: string | null;
 };
 
-export default async function NewHealthRecordPage() {
+type SearchParams = {
+  error?: string;
+};
+
+export default async function NewHealthRecordPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
 
   // -----------------------------------------
@@ -46,7 +56,6 @@ export default async function NewHealthRecordPage() {
   }
 
   const safeFarms: Farm[] = farms ?? [];
-
   const farmIds = safeFarms.map((farm) => farm.id);
 
   // -----------------------------------------
@@ -76,7 +85,28 @@ export default async function NewHealthRecordPage() {
   }
 
   // -----------------------------------------
-  // 4. Page
+  // Error messages
+  // -----------------------------------------
+
+  const errorMessages: Record<string, string> = {
+    missing_fields:
+      "Please select a cow, event date and health event type.",
+    invalid_cow:
+      "The selected cow could not be found or does not belong to your farm.",
+    invalid_cost:
+      "Please enter a valid non-negative cost.",
+    save:
+      "We couldn't save this health record. Please try again.",
+    unexpected:
+      "Something went wrong. Please try again.",
+  };
+
+  const errorMessage = params.error
+    ? errorMessages[params.error] ?? errorMessages.unexpected
+    : null;
+
+  // -----------------------------------------
+  // Page
   // -----------------------------------------
 
   return (
@@ -104,6 +134,23 @@ export default async function NewHealthRecordPage() {
             veterinary visit or other health event.
           </p>
         </div>
+
+        {/* ERROR */}
+
+        {errorMessage && (
+          <div
+            role="alert"
+            className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700"
+          >
+            <div className="font-semibold">
+              Unable to save health record
+            </div>
+
+            <p className="mt-1">
+              {errorMessage}
+            </p>
+          </div>
+        )}
 
         {/* NO FARM */}
 
@@ -170,6 +217,10 @@ export default async function NewHealthRecordPage() {
 
               const supabase = await createClient();
 
+              // -----------------------------------------
+              // Authenticate
+              // -----------------------------------------
+
               const {
                 data: { user },
               } = await supabase.auth.getUser();
@@ -178,123 +229,145 @@ export default async function NewHealthRecordPage() {
                 redirect("/login");
               }
 
+              // -----------------------------------------
+              // Read form values
+              // -----------------------------------------
+
               const cowId = String(
                 formData.get("cow_id") || ""
-              );
+              ).trim();
 
               const eventDate = String(
                 formData.get("event_date") || ""
-              );
+              ).trim();
 
               const eventType = String(
                 formData.get("event_type") || ""
-              );
+              ).trim();
 
               const diagnosis = String(
                 formData.get("diagnosis") || ""
-              );
+              ).trim();
 
               const treatment = String(
                 formData.get("treatment") || ""
-              );
+              ).trim();
 
               const veterinarian = String(
                 formData.get("veterinarian") || ""
-              );
+              ).trim();
 
               const medication = String(
                 formData.get("medication") || ""
-              );
+              ).trim();
 
               const costValue = String(
                 formData.get("cost_ksh") || ""
-              );
+              ).trim();
 
               const notes = String(
                 formData.get("notes") || ""
-              );
+              ).trim();
+
+              // -----------------------------------------
+              // Validate required fields
+              // -----------------------------------------
 
               if (!cowId || !eventDate || !eventType) {
-                redirect("/dashboard/health/new");
+                redirect(
+                  "/dashboard/health/new?error=missing_fields"
+                );
               }
 
               // -----------------------------------------
-              // Verify cow belongs to the logged-in user
-              // -----------------------------------------
-
-              const { data: cow } = await supabase
-                .from("cows")
-                .select(`
-                  id,
-                  farm_id
-                `)
-                .eq("id", cowId)
-                .single();
-
-              if (!cow) {
-                redirect("/dashboard/health/new");
-              }
-
-              const { data: farm } = await supabase
-                .from("farms")
-                .select("id")
-                .eq("id", cow.farm_id)
-                .eq("owner_id", user.id)
-                .single();
-
-              if (!farm) {
-                redirect("/dashboard/health/new");
-              }
-
-              // -----------------------------------------
-              // Convert cost
+              // Validate cost
               // -----------------------------------------
 
               const cost =
-                costValue.trim() === ""
+                costValue === ""
                   ? null
                   : Number(costValue);
 
               if (
                 cost !== null &&
-                (Number.isNaN(cost) || cost < 0)
+                (!Number.isFinite(cost) || cost < 0)
               ) {
-                redirect("/dashboard/health/new");
+                redirect(
+                  "/dashboard/health/new?error=invalid_cost"
+                );
+              }
+
+              // -----------------------------------------
+              // Verify cow ownership
+              //
+              // This replaces the previous:
+              // 1. Find cow
+              // 2. Find farm
+              //
+              // with one database query.
+              // -----------------------------------------
+
+              const { data: cow, error: cowError } =
+                await supabase
+                  .from("cows")
+                  .select(`
+                    id,
+                    farm_id,
+                    farms!inner (
+                      id,
+                      owner_id
+                    )
+                  `)
+                  .eq("id", cowId)
+                  .eq("farms.owner_id", user.id)
+                  .single();
+
+              if (cowError || !cow) {
+                console.error(
+                  "Cow ownership validation error:",
+                  cowError
+                );
+
+                redirect(
+                  "/dashboard/health/new?error=invalid_cow"
+                );
               }
 
               // -----------------------------------------
               // Insert health record
               // -----------------------------------------
 
-              const { error } = await supabase
-                .from("health_records")
-                .insert({
-                  cow_id: cow.id,
-                  event_date: eventDate,
-                  event_type: eventType,
-                  diagnosis:
-                    diagnosis.trim() || null,
-                  treatment:
-                    treatment.trim() || null,
-                  veterinarian:
-                    veterinarian.trim() || null,
-                  medication:
-                    medication.trim() || null,
-                  cost_ksh: cost,
-                  notes:
-                    notes.trim() || null,
-                });
+              const { error: insertError } =
+                await supabase
+                  .from("health_records")
+                  .insert({
+                    cow_id: cow.id,
+                    event_date: eventDate,
+                    event_type: eventType,
+                    diagnosis: diagnosis || null,
+                    treatment: treatment || null,
+                    veterinarian:
+                      veterinarian || null,
+                    medication:
+                      medication || null,
+                    cost_ksh: cost,
+                    notes: notes || null,
+                  });
 
-              if (error) {
+              if (insertError) {
                 console.error(
                   "Health record insert error:",
-                  error
+                  insertError
                 );
 
                 redirect(
                   "/dashboard/health/new?error=save"
                 );
               }
+
+              // -----------------------------------------
+              // Success
+              // -----------------------------------------
 
               redirect("/dashboard/health");
             }}
@@ -553,12 +626,7 @@ export default async function NewHealthRecordPage() {
                 Cancel
               </Link>
 
-              <button
-                type="submit"
-                className="flex-1 rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800"
-              >
-                Save Health Event
-              </button>
+              <SubmitButton />
 
             </div>
 
