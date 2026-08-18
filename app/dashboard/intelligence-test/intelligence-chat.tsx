@@ -441,7 +441,7 @@ export default function IntelligenceChat() {
                 bg-green-100
                 text-xl
               ">
-                🧠
+                
               </div>
 
 

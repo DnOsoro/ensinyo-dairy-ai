@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import {
+  getTodayDate,
+  isFutureDate,
+} from "@/lib/utils/date";
 
 const expenseCategories = [
   "Feed",
@@ -23,11 +27,7 @@ export default function NewExpensePage() {
   const router = useRouter();
 
   const [expenseDate, setExpenseDate] =
-    useState(
-      new Date()
-        .toISOString()
-        .split("T")[0]
-    );
+    useState(getTodayDate());
 
   const [category, setCategory] =
     useState("Feed");
@@ -53,6 +53,11 @@ export default function NewExpensePage() {
 
     if (!expenseDate) {
       setError("Please select an expense date.");
+      return;
+    }
+
+    if (isFutureDate(expenseDate)) {
+      setError("Expense records cannot use a future date.");
       return;
     }
 
@@ -223,7 +228,7 @@ export default function NewExpensePage() {
           </Link>
 
           <h1 className="mt-3 text-3xl font-bold text-gray-900">
-            Record Expense 💰
+            Record Expense 
           </h1>
 
           <p className="mt-1 text-gray-600">
@@ -269,6 +274,7 @@ export default function NewExpensePage() {
             <input
               id="expense_date"
               type="date"
+              max={getTodayDate()}
               value={expenseDate}
               onChange={(event) =>
                 setExpenseDate(
@@ -276,7 +282,7 @@ export default function NewExpensePage() {
                 )
               }
               required
-              className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-900 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100"
+              className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100"
             />
 
           </div>

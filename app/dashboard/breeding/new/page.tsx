@@ -381,7 +381,7 @@ export default async function NewBreedingRecordPage() {
           <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
 
             <div className="text-5xl">
-              🌱
+              
             </div>
 
             <h1 className="mt-4 text-2xl font-bold text-gray-900">
@@ -426,7 +426,7 @@ export default async function NewBreedingRecordPage() {
           <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
 
             <div className="text-5xl">
-              🐄
+              
             </div>
 
             <h1 className="mt-4 text-2xl font-bold text-gray-900">

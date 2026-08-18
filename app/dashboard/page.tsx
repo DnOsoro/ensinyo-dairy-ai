@@ -14,52 +14,46 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const fullName =
-    user.user_metadata?.full_name || "Farmer";
-
-  const firstName =
-    fullName.split(" ")[0];
+  const fullName = user.user_metadata?.full_name || "Farmer";
+  const firstName = fullName.split(" ")[0];
 
   return (
-    <main className="min-h-screen bg-[#f7f8f3]">
+    <main className="min-h-screen bg-[var(--background)]">
 
       {/* =====================================================
           HEADER
       ===================================================== */}
 
-      <header className="border-b bg-white">
-
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+      <header className="border-b border-gray-200 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
 
           {/* BRAND */}
 
-          <div>
-
-            <h1 className="text-2xl font-bold text-green-800">
+          <Link href="/dashboard" className="group">
+            <h1 className="text-xl font-bold tracking-tight text-green-900 transition group-hover:text-green-700 sm:text-2xl">
               Ensinyo
             </h1>
-
-            <p className="text-sm text-gray-500">
+            <p className="text-xs text-gray-500 sm:text-sm">
               Dairy Intelligence Platform
             </p>
+          </Link>
 
-          </div>
 
+          {/* USER SECTION */}
 
-          {/* USER + LOGOUT */}
+          <div className="flex items-center gap-3 sm:gap-4">
 
-          <div className="flex items-center gap-4">
-
-            <div className="text-right">
-
-              <p className="font-semibold text-gray-900">
+            <div className="hidden text-right sm:block">
+              <p className="text-sm font-semibold text-gray-900">
                 {fullName}
               </p>
-
-              <p className="text-sm text-gray-500">
+              <p className="text-xs text-gray-500">
                 {user.email}
               </p>
+            </div>
 
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-900 text-sm font-bold text-white">
+              {firstName.charAt(0).toUpperCase()}
             </div>
 
             <LogoutButton />
@@ -67,7 +61,6 @@ export default async function DashboardPage() {
           </div>
 
         </div>
-
       </header>
 
 
@@ -75,23 +68,24 @@ export default async function DashboardPage() {
           MAIN CONTENT
       ===================================================== */}
 
-      <section className="mx-auto max-w-7xl px-6 py-10">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
 
         {/* ===================================================
             WELCOME
         =================================================== */}
 
         <div className="mb-8">
-
-          <h2 className="text-3xl font-bold text-gray-900">
-            Welcome, {firstName} 👋
-          </h2>
-
-          <p className="mt-2 text-gray-600">
-            Manage your farm, understand your data and make
-            better decisions.
+          <p className="text-sm font-semibold uppercase tracking-wider text-green-700">
+            Farm overview
           </p>
 
+          <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+            Welcome, {firstName}
+          </h2>
+
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-600 sm:text-base">
+            Manage your farm, understand your data and make better decisions.
+          </p>
         </div>
 
 
@@ -101,7 +95,7 @@ export default async function DashboardPage() {
 
         <Link
           href="/dashboard/intelligence"
-          className="group mb-10 block overflow-hidden rounded-3xl bg-gradient-to-br from-green-800 via-green-700 to-green-600 p-8 text-white shadow-md transition hover:-translate-y-1 hover:shadow-xl"
+          className="group mb-10 block overflow-hidden rounded-3xl bg-green-900 p-6 text-white shadow-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-xl sm:p-8"
         >
 
           <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
@@ -112,56 +106,54 @@ export default async function DashboardPage() {
 
               <div className="flex items-center gap-4">
 
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-3xl">
-                  🧠
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 text-sm font-bold tracking-wide text-white ring-1 ring-white/15">
+                  AI
                 </div>
 
                 <div>
-
-                  <p className="text-sm font-medium text-green-100">
-                    FARM INTELLIGENCE
+                  <p className="text-xs font-semibold uppercase tracking-widest text-green-200">
+                    Farm intelligence
                   </p>
 
-                  <h3 className="text-2xl font-bold">
+                  <h3 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
                     Ensinyo Intelligence
                   </h3>
-
                 </div>
 
               </div>
 
 
-              <p className="mt-5 text-base leading-7 text-green-50">
+              <p className="mt-5 max-w-2xl text-sm leading-7 text-green-50 sm:text-base">
                 Ask questions about your cows, milk, feed,
                 health, breeding and finances — and get answers
-                based on your farm's actual data.
+                based on your farm&apos;s actual data.
               </p>
 
 
               <div className="mt-6 flex flex-wrap gap-2">
 
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                  🐄 Cows
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-medium text-green-50">
+                  Cows
                 </span>
 
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                  🥛 Milk
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-medium text-green-50">
+                  Milk
                 </span>
 
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                  🥬 Feed
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-medium text-green-50">
+                  Feed
                 </span>
 
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                  ❤️ Health
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-medium text-green-50">
+                  Health
                 </span>
 
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                  🧬 Breeding
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-medium text-green-50">
+                  Breeding
                 </span>
 
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                  💰 Finances
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-medium text-green-50">
+                  Finances
                 </span>
 
               </div>
@@ -173,8 +165,8 @@ export default async function DashboardPage() {
 
             <div className="shrink-0">
 
-              <div className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-green-800 shadow-sm transition group-hover:bg-green-50">
-                Ask Ensinyo →
+              <div className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-green-900 shadow-sm transition group-hover:bg-green-50 sm:px-6">
+                Ask Ensinyo
               </div>
 
             </div>
@@ -190,13 +182,16 @@ export default async function DashboardPage() {
 
         <div className="mb-5">
 
-          <h3 className="text-xl font-bold text-gray-900">
+          <p className="text-xs font-semibold uppercase tracking-wider text-green-700">
+            Discover
+          </p>
+
+          <h3 className="mt-1 text-2xl font-bold tracking-tight text-gray-950">
             Explore Ensinyo
           </h3>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Learn better farming practices and connect with
-            agricultural services.
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
+            Learn better farming practices and connect with agricultural services.
           </p>
 
         </div>
@@ -210,13 +205,13 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/learning"
-            className="group rounded-2xl bg-white p-7 shadow-sm ring-1 ring-gray-200 transition hover:-translate-y-1 hover:shadow-md"
+            className="group rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-7"
           >
 
             <div className="flex items-start justify-between">
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-3xl">
-                🎓
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-xs font-bold uppercase tracking-wide text-green-700 ring-1 ring-green-100">
+                Learn
               </div>
 
               <span className="text-sm font-semibold text-green-700 transition group-hover:translate-x-1">
@@ -233,26 +228,26 @@ export default async function DashboardPage() {
 
             <p className="mt-2 max-w-lg text-sm leading-6 text-gray-600">
               Learn practical modern dairy farming practices
-              through simple educational videos and guides.
+              through simple educational guides and videos.
             </p>
 
 
             <div className="mt-5 flex flex-wrap gap-2">
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🏠 Modern cow sheds
+                Modern cow sheds
               </span>
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🌾 Silage
+                Silage
               </span>
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🥬 Feeding
+                Feeding
               </span>
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🐄 Dairy management
+                Dairy management
               </span>
 
             </div>
@@ -266,13 +261,13 @@ export default async function DashboardPage() {
 
           <Link
             href="/dashboard/marketplace"
-            className="group rounded-2xl bg-white p-7 shadow-sm ring-1 ring-gray-200 transition hover:-translate-y-1 hover:shadow-md"
+            className="group rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg sm:p-7"
           >
 
             <div className="flex items-start justify-between">
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-3xl">
-                🤝
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-xs font-bold uppercase tracking-wide text-green-700 ring-1 ring-green-100">
+                Market
               </div>
 
               <span className="text-sm font-semibold text-green-700 transition group-hover:translate-x-1">
@@ -296,23 +291,23 @@ export default async function DashboardPage() {
             <div className="mt-5 flex flex-wrap gap-2">
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🩺 Veterinarians
+                Veterinarians
               </span>
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🌱 Agrovet
+                Agrovet
               </span>
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🌾 Feed suppliers
+                Feed suppliers
               </span>
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🏗️ Farm builders
+                Farm builders
               </span>
 
               <span className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-600">
-                🥛 Milk buyers
+                Milk buyers
               </span>
 
             </div>
@@ -328,11 +323,15 @@ export default async function DashboardPage() {
 
         <div className="mb-5">
 
-          <h3 className="text-xl font-bold text-gray-900">
+          <p className="text-xs font-semibold uppercase tracking-wider text-green-700">
+            Operations
+          </p>
+
+          <h3 className="mt-1 text-2xl font-bold tracking-tight text-gray-950">
             Farm Management
           </h3>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-2 text-sm leading-6 text-gray-500">
             Manage your farm records and operations.
           </p>
 
@@ -341,93 +340,57 @@ export default async function DashboardPage() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-
-          {/* FARM */}
-
           <DashboardCard
-            icon="🌱"
             title="My Farm"
-            description="Manage your farm information."
+            description="Manage your farm details and general setup."
             href="/dashboard/farm"
           />
 
-
-          {/* COWS */}
-
           <DashboardCard
-            icon="🐄"
             title="My Cows"
-            description="Track animals, breeds and health."
+            description="Track individual animals, breeds, and herd health."
             href="/dashboard/cows"
           />
 
-
-          {/* MILK */}
-
           <DashboardCard
-            icon="🥛"
             title="Milk Production"
-            description="Track and analyze your daily milk production."
+            description="Log daily yields and analyze milk output trends."
             href="/dashboard/milk"
           />
 
-
-          {/* HEALTH */}
-
           <DashboardCard
-            icon="❤️"
             title="Health Management"
-            description="Track diseases, treatments and veterinary care."
+            description="Record health issues, treatments, and vet visits."
             href="/dashboard/health"
           />
 
-
-          {/* BREEDING */}
-
           <DashboardCard
-            icon="🧬"
             title="Breeding"
-            description="Track mating, insemination, pregnancy and breeding history."
+            description="Track inseminations, pregnancy status, and calf history."
             href="/dashboard/breeding"
           />
 
-
-          {/* FEED */}
-
           <DashboardCard
-            icon="🥬"
             title="Feed Management"
-            description="Track feed usage, quantities and feeding costs."
+            description="Monitor daily feed consumption and ration costs."
             href="/dashboard/feed"
           />
 
-
-          {/* EXPENSES */}
-
           <DashboardCard
-            icon="💰"
             title="Expenses"
-            description="Track farm expenses, spending and operating costs."
+            description="Record input purchases and operational costs."
             href="/dashboard/expenses"
           />
 
-
-          {/* INCOME */}
-
           <DashboardCard
-            icon="💵"
             title="Income"
-            description="Track milk sales, livestock sales and other farm income."
+            description="Track revenue from milk sales and livestock."
             href="/dashboard/income"
           />
 
-
-          {/* ANALYTICS */}
-
           <DashboardCard
-            icon="📊"
             title="Analytics"
-            description="Understand your farm performance, trends and key metrics."
+            description="Evaluate farm financial and operational KPIs."
             href="/dashboard/analytics"
           />
 
@@ -441,56 +404,37 @@ export default async function DashboardPage() {
 
 
 /* ===========================================================
-   DASHBOARD CARD COMPONENT
+   REUSABLE DASHBOARD CARD COMPONENT
 =========================================================== */
 
 function DashboardCard({
-  icon,
   title,
   description,
   href,
 }: {
-  icon: string;
   title: string;
   description: string;
   href: string;
 }) {
-
   return (
-
     <Link
       href={href}
-      className="group rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition hover:-translate-y-1 hover:shadow-md"
+      className="group flex flex-col justify-between rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition duration-200 hover:-translate-y-0.5 hover:shadow-md"
     >
+      <div>
+        <h3 className="text-lg font-bold text-gray-900 group-hover:text-green-700">
+          {title}
+        </h3>
 
-      {/* ICON */}
-
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-2xl">
-        {icon}
+        <p className="mt-2 text-sm leading-6 text-gray-600">
+          {description}
+        </p>
       </div>
 
-
-      {/* TITLE */}
-
-      <h3 className="mt-5 text-lg font-bold text-gray-900 group-hover:text-green-700">
-        {title}
-      </h3>
-
-
-      {/* DESCRIPTION */}
-
-      <p className="mt-2 text-sm leading-6 text-gray-600">
-        {description}
-      </p>
-
-
-      {/* LINK */}
-
-      <div className="mt-5 text-sm font-semibold text-green-700">
-        Open →
+      <div className="mt-5 flex items-center gap-1 text-sm font-semibold text-green-700 transition group-hover:translate-x-0.5">
+        <span>Open</span>
+        <span>→</span>
       </div>
-
     </Link>
-
   );
 }

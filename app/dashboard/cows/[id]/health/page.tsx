@@ -2,15 +2,6 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-type Cow = {
-  id: string;
-  farm_id: string;
-  tag_number: string | null;
-  name: string | null;
-  breed: string | null;
-  sex: string | null;
-};
-
 type HealthRecord = {
   id: string;
   cow_id: string;
@@ -187,7 +178,7 @@ export default async function CowHealthPage({
             <div className="flex items-center gap-3">
 
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-3xl">
-                ❤️
+                
               </div>
 
               <div>
@@ -292,7 +283,7 @@ export default async function CowHealthPage({
             <div className="rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
 
               <div className="text-5xl">
-                ❤️
+                
               </div>
 
               <h3 className="mt-4 text-xl font-bold text-gray-900">

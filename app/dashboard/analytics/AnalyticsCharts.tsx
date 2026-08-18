@@ -118,7 +118,7 @@ export default function AnalyticsCharts({
           </div>
 
           <span className="text-2xl">
-            🥛
+            
           </span>
 
         </div>
@@ -171,7 +171,7 @@ export default function AnalyticsCharts({
           </div>
 
           <span className="text-2xl">
-            💰
+            
           </span>
 
         </div>
@@ -277,7 +277,7 @@ export default function AnalyticsCharts({
           </div>
 
           <span className="text-2xl">
-            🥬
+            
           </span>
 
         </div>
@@ -332,7 +332,7 @@ export default function AnalyticsCharts({
           </div>
 
           <span className="text-2xl">
-            💸
+            
           </span>
 
         </div>
@@ -394,7 +394,7 @@ export default function AnalyticsCharts({
           </div>
 
           <span className="text-2xl">
-            💵
+            
           </span>
 
         </div>

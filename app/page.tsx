@@ -1,36 +1,36 @@
 const features = [
   {
-    icon: "🐄",
+    icon: "",
     title: "Manage Your Cows",
     description:
       "Keep simple digital records for every cow, including milk production, health, breeding and pregnancy.",
   },
   {
-    icon: "🌱",
+    icon: "",
     title: "Track Your Feed",
     description:
       "Know what feed you have, what your cows consume and how much your feeding is costing.",
   },
   {
-    icon: "📊",
+    icon: "",
     title: "Understand Your Farm",
     description:
       "Turn your daily farm records into simple insights about production, costs and profitability.",
   },
   {
-    icon: "🤖",
+    icon: "",
     title: "Ask Your AI Assistant",
     description:
       "Get practical, data-driven guidance based on your farm records and trusted dairy knowledge.",
   },
   {
-    icon: "💰",
+    icon: "",
     title: "Manage Your Finances",
     description:
       "Track milk income, farm expenses, costs per litre and your overall farm performance.",
   },
   {
-    icon: "🛒",
+    icon: "",
     title: "Find Farm Services",
     description:
       "Connect with veterinarians, agrovets, feed suppliers, builders and milk buyers around you.",
@@ -45,7 +45,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-600 text-xl">
-              🐄
+              
             </div>
 
             <div>
@@ -100,7 +100,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-sm font-medium text-green-700">
-              <span>🌱</span>
+              <span></span>
               Built for farmers
             </div>
 
@@ -148,7 +148,7 @@ export default function Home() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-500">My Farm</p>
-                    <h3 className="text-xl font-bold">Welcome back 👋</h3>
+                    <h3 className="text-xl font-bold">Welcome back </h3>
                   </div>
 
                   <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
@@ -205,7 +205,7 @@ export default function Home() {
 
                 <div className="mt-4 rounded-xl bg-green-600 p-4 text-white">
                   <div className="flex items-start gap-3">
-                    <span className="text-xl">🤖</span>
+                    <span className="text-xl"></span>
 
                     <div>
                       <p className="font-semibold">AI Farm Insight</p>
@@ -220,11 +220,11 @@ export default function Home() {
             </div>
 
             <div className="absolute -right-6 -top-6 hidden rounded-2xl bg-green-600 p-4 text-3xl shadow-lg sm:block">
-              🐄
+              
             </div>
 
             <div className="absolute -bottom-6 -left-6 hidden rounded-2xl bg-white p-4 text-3xl shadow-lg sm:block">
-              🌱
+              
             </div>
           </div>
         </div>
@@ -350,12 +350,12 @@ export default function Home() {
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                ["🐄", "Veterinarians"],
-                ["🌱", "Agrovets"],
-                ["🌾", "Feed Suppliers"],
-                ["🏗️", "Farm Builders"],
-                ["🥛", "Milk Buyers"],
-                ["🚜", "Farm Equipment"],
+                ["", "Veterinarians"],
+                ["", "Agrovets"],
+                ["", "Feed Suppliers"],
+                ["", "Farm Builders"],
+                ["", "Milk Buyers"],
+                ["", "Farm Equipment"],
               ].map(([icon, title]) => (
                 <div
                   key={title}
@@ -373,7 +373,7 @@ export default function Home() {
       {/* CTA */}
       <section className="bg-gray-900 py-20 text-white">
         <div className="mx-auto max-w-4xl px-6 text-center">
-          <div className="text-4xl">🐄 🌱 📊</div>
+          <div className="text-4xl">  </div>
 
           <h2 className="mt-5 text-3xl font-bold sm:text-4xl">
             Your farm has data. Let&apos;s turn it into better decisions.
@@ -403,7 +403,7 @@ export default function Home() {
             </span>
           </div>
 
-          <p>Built for farmers. Built with data. 🌱</p>
+          <p>Built for farmers. Built with data. </p>
         </div>
       </footer>
     </main>

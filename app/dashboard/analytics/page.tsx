@@ -121,7 +121,7 @@ export default async function AnalyticsPage() {
           </Link>
 
           <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
-            <div className="text-5xl">📊</div>
+            <div className="text-5xl"></div>
 
             <h1 className="mt-4 text-2xl font-bold text-gray-900">
               Set up your farm first
@@ -153,8 +153,6 @@ export default async function AnalyticsPage() {
   const today = getNairobiDate();
 
   const start30Days = getDateDaysAgo(29);
-
-  const monthStart = `${today.slice(0, 7)}-01`;
 
   // ==========================================================
   // 4. LOAD COWS
@@ -599,7 +597,7 @@ export default async function AnalyticsPage() {
             </Link>
 
             <h1 className="mt-3 text-3xl font-bold text-gray-900">
-              Farm Analytics 📊
+              Farm Analytics 
             </h1>
 
             <p className="mt-1 text-gray-600">
@@ -636,19 +634,19 @@ export default async function AnalyticsPage() {
             <MetricCard
               label="Total Cows"
               value={formatNumber(totalCows)}
-              icon="🐄"
+              icon=""
             />
 
             <MetricCard
               label="Active Cows"
               value={formatNumber(activeCows)}
-              icon="🌱"
+              icon=""
             />
 
             <MetricCard
               label="Pregnant Cows"
               value={formatNumber(pregnantCows)}
-              icon="🤰"
+              icon=""
             />
 
             <MetricCard
@@ -657,7 +655,7 @@ export default async function AnalyticsPage() {
                 totalMilk,
                 1
               )} L`}
-              icon="🥛"
+              icon=""
             />
 
           </div>
@@ -681,19 +679,19 @@ export default async function AnalyticsPage() {
             <MetricCard
               label="Income"
               value={formatCurrency(totalIncome)}
-              icon="💵"
+              icon=""
             />
 
             <MetricCard
               label="Expenses"
               value={formatCurrency(totalExpenses)}
-              icon="💰"
+              icon=""
             />
 
             <MetricCard
               label="Net Income"
               value={formatCurrency(netIncome)}
-              icon={netIncome >= 0 ? "📈" : "📉"}
+              icon={netIncome >= 0 ? "" : ""}
               positive={netIncome >= 0}
             />
 
@@ -703,7 +701,7 @@ export default async function AnalyticsPage() {
                 profitMargin,
                 1
               )}%`}
-              icon="🎯"
+              icon=""
               positive={profitMargin >= 0}
             />
 
@@ -749,7 +747,7 @@ export default async function AnalyticsPage() {
                 totalFeed,
                 1
               )} kg`}
-              icon="🥬"
+              icon=""
             />
 
             <MetricCard
@@ -757,7 +755,7 @@ export default async function AnalyticsPage() {
               value={formatCurrency(
                 totalFeedCost
               )}
-              icon="🌾"
+              icon=""
             />
 
             <MetricCard
@@ -765,7 +763,7 @@ export default async function AnalyticsPage() {
               value={formatCurrency(
                 feedCostPerKg
               )}
-              icon="⚖️"
+              icon=""
             />
 
             <MetricCard
@@ -773,7 +771,7 @@ export default async function AnalyticsPage() {
               value={formatNumber(
                 healthEventCount
               )}
-              icon="❤️"
+              icon=""
             />
 
           </div>
@@ -785,7 +783,7 @@ export default async function AnalyticsPage() {
               value={formatCurrency(
                 healthCost
               )}
-              icon="🩺"
+              icon=""
             />
 
             <MetricCard
@@ -793,7 +791,7 @@ export default async function AnalyticsPage() {
               value={formatNumber(
                 breedingEventCount
               )}
-              icon="🧬"
+              icon=""
             />
 
             <MetricCard
@@ -801,7 +799,7 @@ export default async function AnalyticsPage() {
               value={formatNumber(
                 upcomingCalvings
               )}
-              icon="🐮"
+              icon=""
             />
 
             <MetricCard
@@ -809,7 +807,7 @@ export default async function AnalyticsPage() {
               value={formatCurrency(
                 breedingCost
               )}
-              icon="💉"
+              icon=""
             />
 
           </div>
@@ -877,7 +875,7 @@ export default async function AnalyticsPage() {
             <div className="mt-8 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
 
               <div className="text-4xl">
-                📊
+                
               </div>
 
               <h3 className="mt-3 text-lg font-bold text-gray-900">

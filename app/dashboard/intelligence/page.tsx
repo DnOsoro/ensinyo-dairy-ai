@@ -80,7 +80,7 @@ export default async function IntelligencePage() {
           <div className="flex items-center gap-3">
 
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-2xl">
-              🧠
+              
             </div>
 
             <div>

@@ -1,5 +1,6 @@
 export type FarmQueryIntent =
   | "milk_production"
+  | "milk_projection"
   | "feed"
   | "finance"
   | "health"
@@ -21,6 +22,8 @@ export type FarmQuery = {
   cowId?: string;
 
   cowName?: string;
+
+  cowCount?: number;
 
   rawQuestion: string;
 };

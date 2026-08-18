@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import DeleteFeedButton from "./DeleteFeedButton";
 
 type Farm = {
   id: string;
@@ -114,27 +115,24 @@ export default async function FeedPage() {
       : 0;
 
   // =========================================================
-  // 5. TODAY
+  // 5. TODAY (EAST AFRICA TIMEZONE - AFRICA/NAIROBI)
   // =========================================================
 
-  const today = new Date()
-    .toISOString()
-    .split("T")[0];
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Nairobi",
+  }).format(new Date());
 
   const todayRecords = feedRecords.filter(
-    (record) =>
-      record.feed_date === today
+    (record) => record.feed_date === today
   );
 
   const todayQuantity = todayRecords.reduce(
-    (sum, record) =>
-      sum + Number(record.quantity_kg ?? 0),
+    (sum, record) => sum + Number(record.quantity_kg ?? 0),
     0
   );
 
   const todayCost = todayRecords.reduce(
-    (sum, record) =>
-      sum + Number(record.cost_ksh ?? 0),
+    (sum, record) => sum + Number(record.cost_ksh ?? 0),
     0
   );
 
@@ -144,15 +142,11 @@ export default async function FeedPage() {
 
   return (
     <main className="min-h-screen bg-[#f7f8f3] px-6 py-10">
-
       <div className="mx-auto max-w-6xl">
-
         {/* HEADER */}
 
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
           <div>
-
             <Link
               href="/dashboard"
               className="text-sm font-medium text-green-700 hover:text-green-800"
@@ -161,13 +155,12 @@ export default async function FeedPage() {
             </Link>
 
             <h1 className="mt-3 text-3xl font-bold text-gray-900">
-              Feed Management 🥬
+              Feed Management
             </h1>
 
             <p className="mt-1 text-gray-600">
               Track feed usage, quantities and feeding costs.
             </p>
-
           </div>
 
           <Link
@@ -176,26 +169,18 @@ export default async function FeedPage() {
           >
             + Record Feed
           </Link>
-
         </div>
 
         {/* NO FARM */}
 
         {userFarms.length === 0 && (
-
           <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
-
-            <div className="text-5xl">
-              🌱
-            </div>
-
             <h2 className="mt-4 text-xl font-bold text-gray-900">
               Add your farm first
             </h2>
 
             <p className="mx-auto mt-2 max-w-md text-gray-600">
-              You need to create your farm before
-              recording feed information.
+              You need to create your farm before recording feed information.
             </p>
 
             <Link
@@ -204,43 +189,33 @@ export default async function FeedPage() {
             >
               Add Farm
             </Link>
-
           </div>
-
         )}
 
         {/* FARM EXISTS */}
 
         {userFarms.length > 0 && (
-
           <>
-
             {/* SUMMARY CARDS */}
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
               {/* TODAY */}
 
               <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-
                 <p className="text-sm font-medium text-gray-500">
-                  Today's Feed
+                  Today&apos;s Feed
                 </p>
 
                 <p className="mt-2 text-3xl font-bold text-gray-900">
                   {todayQuantity.toFixed(2)} kg
                 </p>
 
-                <p className="mt-1 text-sm text-gray-500">
-                  {today}
-                </p>
-
+                <p className="mt-1 text-sm text-gray-500">{today}</p>
               </div>
 
               {/* TOTAL */}
 
               <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-
                 <p className="text-sm font-medium text-gray-500">
                   Total Feed
                 </p>
@@ -249,76 +224,54 @@ export default async function FeedPage() {
                   {totalQuantity.toFixed(2)} kg
                 </p>
 
-                <p className="mt-1 text-sm text-gray-500">
-                  Across all records
-                </p>
-
+                <p className="mt-1 text-sm text-gray-500">Across all records</p>
               </div>
 
               {/* COST */}
 
               <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-
-                <p className="text-sm font-medium text-gray-500">
-                  Feed Cost
-                </p>
+                <p className="text-sm font-medium text-gray-500">Feed Cost</p>
 
                 <p className="mt-2 text-3xl font-bold text-gray-900">
                   KSh{" "}
-                  {totalCost.toLocaleString(
-                    "en-KE",
-                    {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 2,
-                    }
-                  )}
+                  {totalCost.toLocaleString("en-KE", {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2,
+                  })}
                 </p>
 
-                <p className="mt-1 text-sm text-gray-500">
-                  All recorded feed
-                </p>
-
+                <p className="mt-1 text-sm text-gray-500">All recorded feed</p>
               </div>
 
               {/* COST PER KG */}
 
               <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-
                 <p className="text-sm font-medium text-gray-500">
                   Average Cost / Kg
                 </p>
 
                 <p className="mt-2 text-3xl font-bold text-gray-900">
                   KSh{" "}
-                  {averageCostPerKg.toLocaleString(
-                    "en-KE",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}
+                  {averageCostPerKg.toLocaleString("en-KE", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </p>
 
                 <p className="mt-1 text-sm text-gray-500">
                   Feed cost efficiency
                 </p>
-
               </div>
-
             </div>
 
             {/* TODAY SUMMARY */}
 
             {todayRecords.length > 0 && (
-
               <div className="mt-8 rounded-2xl bg-green-50 p-6 ring-1 ring-green-100">
-
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-
                   <div>
-
                     <h2 className="text-lg font-bold text-green-900">
-                      Today's Feeding
+                      Today&apos;s Feeding
                     </h2>
 
                     <p className="mt-1 text-sm text-green-800">
@@ -328,42 +281,28 @@ export default async function FeedPage() {
                         : "feed records"}{" "}
                       recorded today.
                     </p>
-
                   </div>
 
                   <div className="text-left sm:text-right">
-
-                    <p className="text-sm text-green-700">
-                      Quantity
-                    </p>
+                    <p className="text-sm text-green-700">Quantity</p>
 
                     <p className="text-xl font-bold text-green-900">
                       {todayQuantity.toFixed(2)} kg
                     </p>
 
                     <p className="mt-1 text-sm text-green-700">
-                      Cost: KSh{" "}
-                      {todayCost.toLocaleString(
-                        "en-KE"
-                      )}
+                      Cost: KSh {todayCost.toLocaleString("en-KE")}
                     </p>
-
                   </div>
-
                 </div>
-
               </div>
-
             )}
 
             {/* RECENT RECORDS */}
 
             <section className="mt-8">
-
               <div className="flex items-center justify-between">
-
                 <div>
-
                   <h2 className="text-xl font-bold text-gray-900">
                     Recent Feed Records
                   </h2>
@@ -371,41 +310,26 @@ export default async function FeedPage() {
                   <p className="mt-1 text-sm text-gray-600">
                     Your latest feed usage and cost entries.
                   </p>
-
                 </div>
 
                 {feedRecords.length > 0 && (
-
                   <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
-
                     {feedRecords.length}{" "}
-                    {feedRecords.length === 1
-                      ? "record"
-                      : "records"}
-
+                    {feedRecords.length === 1 ? "record" : "records"}
                   </span>
-
                 )}
-
               </div>
 
               {/* NO RECORDS */}
 
               {feedRecords.length === 0 && (
-
                 <div className="mt-6 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
-
-                  <div className="text-5xl">
-                    🥬
-                  </div>
-
                   <h3 className="mt-4 text-lg font-bold text-gray-900">
                     No feed records yet
                   </h3>
 
                   <p className="mx-auto mt-2 max-w-md text-gray-600">
-                    Start recording the feed used on
-                    your farm.
+                    Start recording the feed used on your farm.
                   </p>
 
                   <Link
@@ -414,126 +338,148 @@ export default async function FeedPage() {
                   >
                     Record First Feed
                   </Link>
-
                 </div>
-
               )}
 
-              {/* RECORD LIST */}
+              {/* RECORD TABLE & CARDS */}
 
               {feedRecords.length > 0 && (
-
-                <div className="mt-6 space-y-4">
-
-                  {feedRecords
-                    .slice(0, 20)
-                    .map((record) => (
-
-                      <div
-                        key={record.id}
-                        className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
-                      >
-
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-
+                <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
+                  {/* MOBILE LIST */}
+                  <div className="divide-y divide-gray-200 sm:hidden">
+                    {feedRecords.slice(0, 20).map((record) => (
+                      <div key={record.id} className="p-4 space-y-3">
+                        <div className="flex items-start justify-between">
                           <div>
-
-                            <h3 className="text-lg font-bold text-gray-900">
+                            <p className="font-semibold text-gray-900">
                               {record.feed_type}
-                            </h3>
-
-                            <p className="mt-1 text-sm text-gray-500">
+                            </p>
+                            <p className="text-xs text-gray-500">
                               {record.feed_date}
                             </p>
-
                           </div>
-
-                          <div className="rounded-xl bg-green-50 px-4 py-2 text-right">
-
-                            <p className="text-xs font-medium text-green-700">
-                              Quantity
+                          <div className="text-right">
+                            <p className="font-bold text-green-700">
+                              {Number(record.quantity_kg).toFixed(2)} kg
                             </p>
-
-                            <p className="text-xl font-bold text-green-800">
-                              {Number(
-                                record.quantity_kg
-                              ).toFixed(2)}{" "}
-                              kg
-                            </p>
-
-                          </div>
-
-                        </div>
-
-                        {/* DETAILS */}
-
-                        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-
-                          <div className="rounded-xl bg-gray-50 p-4">
-
                             <p className="text-xs text-gray-500">
-                              Feed Type
-                            </p>
-
-                            <p className="mt-1 text-sm font-semibold text-gray-900">
-                              {record.feed_type}
-                            </p>
-
-                          </div>
-
-                          <div className="rounded-xl bg-gray-50 p-4">
-
-                            <p className="text-xs text-gray-500">
-                              Cost
-                            </p>
-
-                            <p className="mt-1 text-sm font-semibold text-gray-900">
                               KSh{" "}
-                              {Number(
-                                record.cost_ksh ?? 0
-                              ).toLocaleString(
-                                "en-KE"
+                              {Number(record.cost_ksh ?? 0).toLocaleString(
+                                "en-KE",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 2,
+                                }
                               )}
                             </p>
-
                           </div>
-
                         </div>
 
-                        {/* NOTES */}
-
                         {record.notes && (
-
-                          <div className="mt-4 border-t border-gray-100 pt-4">
-
-                            <p className="text-xs font-medium text-gray-500">
-                              Notes
-                            </p>
-
-                            <p className="mt-1 text-sm text-gray-700">
-                              {record.notes}
-                            </p>
-
-                          </div>
-
+                          <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded-lg">
+                            {record.notes}
+                          </p>
                         )}
 
+                        <div className="flex justify-end gap-2 pt-1">
+                          <Link
+                            href={`/dashboard/feed/${record.id}/edit`}
+                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                          >
+                            Edit
+                          </Link>
+                          <DeleteFeedButton recordId={record.id} />
+                        </div>
                       </div>
-
                     ))}
+                  </div>
 
+                  {/* DESKTOP TABLE */}
+                  <div className="hidden overflow-x-auto sm:block">
+                    <table className="w-full text-left">
+                      <thead className="bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                        <tr>
+                          <th className="px-6 py-4">Date</th>
+                          <th className="px-6 py-4">Feed Type</th>
+                          <th className="px-6 py-4 text-right">Quantity</th>
+                          <th className="px-6 py-4 text-right">Cost</th>
+                          <th className="px-6 py-4">Notes</th>
+                          <th className="px-6 py-4 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200 bg-white">
+                        {feedRecords.slice(0, 20).map((record) => (
+                          <tr key={record.id} className="hover:bg-gray-50/50">
+                            {/* DATE */}
+                            <td className="whitespace-nowrap px-6 py-4">
+                              <p className="text-sm font-semibold text-gray-900">
+                                {record.feed_date}
+                              </p>
+                            </td>
+
+                            {/* FEED TYPE */}
+                            <td className="whitespace-nowrap px-6 py-4">
+                              <p className="text-sm font-medium text-gray-900">
+                                {record.feed_type}
+                              </p>
+                            </td>
+
+                            {/* QUANTITY */}
+                            <td className="whitespace-nowrap px-6 py-4 text-right">
+                              <p className="text-sm font-semibold text-gray-900">
+                                {Number(record.quantity_kg).toFixed(2)} kg
+                              </p>
+                            </td>
+
+                            {/* COST */}
+                            <td className="whitespace-nowrap px-6 py-4 text-right">
+                              <p className="text-sm font-semibold text-gray-900">
+                                KSh{" "}
+                                {Number(record.cost_ksh ?? 0).toLocaleString(
+                                  "en-KE",
+                                  {
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}
+                              </p>
+                            </td>
+
+                            {/* NOTES */}
+                            <td className="max-w-xs px-6 py-4">
+                              {record.notes ? (
+                                <p className="truncate text-sm text-gray-600">
+                                  {record.notes}
+                                </p>
+                              ) : (
+                                <span className="text-sm text-gray-400">—</span>
+                              )}
+                            </td>
+
+                            {/* ACTIONS */}
+                            <td className="whitespace-nowrap px-6 py-4">
+                              <div className="flex justify-end gap-2">
+                                <Link
+                                  href={`/dashboard/feed/${record.id}/edit`}
+                                  className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                                >
+                                  Edit
+                                </Link>
+
+                                <DeleteFeedButton recordId={record.id} />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-
               )}
-
             </section>
-
           </>
-
         )}
-
       </div>
-
     </main>
   );
 }
