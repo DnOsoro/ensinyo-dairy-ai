@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import {
+  getTodayDate,
+  isFutureDate,
+} from "@/lib/utils/date";
 
 const categories = [
   "Milk Sales",
@@ -58,11 +62,7 @@ export default function NewIncomePage() {
         setFarmId(data.id);
       }
 
-      const today = new Date()
-        .toISOString()
-        .split("T")[0];
-
-      setIncomeDate(today);
+      setIncomeDate(getTodayDate());
       setLoading(false);
     }
 
@@ -85,6 +85,11 @@ export default function NewIncomePage() {
 
     if (!incomeDate) {
       setError("Please select an income date.");
+      return;
+    }
+
+    if (isFutureDate(incomeDate)) {
+      setError("Income records cannot use a future date.");
       return;
     }
 
@@ -163,7 +168,7 @@ export default function NewIncomePage() {
           </button>
 
           <h1 className="mt-3 text-3xl font-bold text-gray-900">
-            Record Income 💵
+            Record Income 
           </h1>
 
           <p className="mt-1 text-gray-600">
@@ -203,6 +208,7 @@ export default function NewIncomePage() {
             <input
               id="incomeDate"
               type="date"
+              max={getTodayDate()}
               value={incomeDate}
               onChange={(e) =>
                 setIncomeDate(e.target.value)

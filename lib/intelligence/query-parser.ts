@@ -4,18 +4,12 @@ import type {
   FarmQueryPeriod,
 } from "./query-types";
 
-
-function detectIntent(
-  question: string
-): FarmQueryIntent {
-
+function detectIntent(question: string): FarmQueryIntent {
   const q = question.toLowerCase();
-
 
   /*
    * COW PROFILE
    */
-
   if (
     q.includes("tell me about") ||
     q.includes("details about") ||
@@ -26,11 +20,34 @@ function detectIntent(
     return "cow_profile";
   }
 
+  /*
+   * MILK PROJECTION
+   */
+  if (
+    (
+      q.includes("milk") ||
+      q.includes("litres") ||
+      q.includes("liters") ||
+      q.includes("production")
+    ) &&
+    (
+      q.includes("how much") ||
+      q.includes("how many") ||
+      q.includes("could") ||
+      q.includes("would") ||
+      q.includes("can") ||
+      q.includes("expect") ||
+      q.includes("produce") ||
+      q.includes("yield")
+    ) &&
+    /\b\d+\s*(cows?|animals?)\b/i.test(q)
+  ) {
+    return "milk_projection";
+  }
 
   /*
    * MILK PRODUCTION
    */
-
   if (
     q.includes("milk") ||
     q.includes("litres") ||
@@ -40,11 +57,9 @@ function detectIntent(
     return "milk_production";
   }
 
-
   /*
    * FEED
    */
-
   if (
     q.includes("feed") ||
     q.includes("fodder") ||
@@ -54,11 +69,9 @@ function detectIntent(
     return "feed";
   }
 
-
   /*
    * FINANCE
    */
-
   if (
     q.includes("income") ||
     q.includes("revenue") ||
@@ -72,11 +85,9 @@ function detectIntent(
     return "finance";
   }
 
-
   /*
    * HEALTH
    */
-
   if (
     q.includes("health") ||
     q.includes("sick") ||
@@ -88,11 +99,9 @@ function detectIntent(
     return "health";
   }
 
-
   /*
    * BREEDING
    */
-
   if (
     q.includes("pregnant") ||
     q.includes("pregnancy") ||
@@ -103,29 +112,18 @@ function detectIntent(
     return "breeding";
   }
 
-
   /*
    * FARM SUMMARY
    */
-
   return "farm_summary";
 }
 
-
-function detectPeriod(
-  question: string
-): FarmQueryPeriod {
-
+function detectPeriod(question: string): FarmQueryPeriod {
   const q = question.toLowerCase();
 
-
-  if (
-    q.includes("today") ||
-    q.includes("this day")
-  ) {
+  if (q.includes("today") || q.includes("this day")) {
     return "today";
   }
-
 
   if (
     q.includes("7 days") ||
@@ -136,7 +134,6 @@ function detectPeriod(
     return "last_7_days";
   }
 
-
   if (
     q.includes("30 days") ||
     q.includes("thirty days") ||
@@ -146,15 +143,10 @@ function detectPeriod(
     return "last_30_days";
   }
 
-
   return "all_time";
 }
 
-
-function detectCowName(
-  question: string
-): string | undefined {
-
+function detectCowName(question: string): string | undefined {
   /*
    * Initial parser deliberately keeps
    * cow-name detection simple.
@@ -162,32 +154,24 @@ function detectCowName(
    * The query engine will later match
    * this against actual cows in the farm.
    */
-
-  const match =
-    question.match(
-      /(?:about|of|for|did)\s+([A-Za-z][A-Za-z0-9_-]*)/i
-    );
-
+  const match = question.match(
+    /(?:about|of|for|did)\s+([A-Za-z][A-Za-z0-9_-]*)/i
+  );
 
   if (!match) {
     return undefined;
   }
 
-
-  const candidate =
-    match[1]?.trim();
-
+  const candidate = match[1]?.trim();
 
   if (!candidate) {
     return undefined;
   }
 
-
   /*
    * Avoid interpreting common question
    * words as cow names.
    */
-
   const ignoredWords = [
     "the",
     "my",
@@ -201,39 +185,37 @@ function detectCowName(
     "many",
   ];
 
-
-  if (
-    ignoredWords.includes(
-      candidate.toLowerCase()
-    )
-  ) {
+  if (ignoredWords.includes(candidate.toLowerCase())) {
     return undefined;
   }
-
 
   return candidate;
 }
 
+function detectCowCount(question: string): number | undefined {
+  const match = question.match(/\b(\d+(?:\.\d+)?)\s*(?:cows?|animals?)\b/i);
 
-export function parseFarmQuery(
-  question: string
-): FarmQuery {
+  if (!match) {
+    return undefined;
+  }
 
-  const cleanQuestion =
-    question.trim();
+  const count = Number(match[1]);
 
+  if (!Number.isFinite(count) || count <= 0) {
+    return undefined;
+  }
+
+  return count;
+}
+
+export function parseFarmQuery(question: string): FarmQuery {
+  const cleanQuestion = question.trim();
 
   return {
-    intent:
-      detectIntent(cleanQuestion),
-
-    period:
-      detectPeriod(cleanQuestion),
-
-    cowName:
-      detectCowName(cleanQuestion),
-
-    rawQuestion:
-      cleanQuestion,
+    intent: detectIntent(cleanQuestion),
+    period: detectPeriod(cleanQuestion),
+    cowName: detectCowName(cleanQuestion),
+    cowCount: detectCowCount(cleanQuestion),
+    rawQuestion: cleanQuestion,
   };
 }

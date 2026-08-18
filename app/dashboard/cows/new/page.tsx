@@ -43,7 +43,7 @@ export default async function NewCowPage() {
           </h1>
 
           <p className="mt-2 text-gray-600">
-            Add your cow's basic information to your digital herd.
+            Add your cow&apos;s basic information to your digital herd.
           </p>
         </div>
 

@@ -3,6 +3,10 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import {
+  getTodayDate,
+  isFutureDate,
+} from "@/lib/utils/date";
 
 type Farm = {
   id: string;
@@ -30,7 +34,7 @@ export default function CowForm({
   const [weightKg, setWeightKg] = useState("");
   const [status, setStatus] = useState("Active");
   const [pregnancyStatus, setPregnancyStatus] =
-    useState("");
+    useState("Unknown");
   const [notes, setNotes] = useState("");
 
   const [loading, setLoading] = useState(false);
@@ -40,6 +44,9 @@ export default function CowForm({
     event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
+
+    // Prevent accidental double submission
+    if (loading) return;
 
     setLoading(true);
     setError("");
@@ -70,6 +77,16 @@ export default function CowForm({
 
     if (!sex) {
       setError("Please select the cow's sex.");
+      setLoading(false);
+      return;
+    }
+
+    // ----------------------------------------
+    // Validate date of birth
+    // ----------------------------------------
+
+    if (dateOfBirth && isFutureDate(dateOfBirth)) {
+      setError("Date of birth cannot be in the future.");
       setLoading(false);
       return;
     }
@@ -162,7 +179,7 @@ export default function CowForm({
               status || "Active",
 
             pregnancy_status:
-              pregnancyStatus || null,
+              pregnancyStatus || "Unknown",
 
             notes:
               notes.trim() || null,
@@ -172,12 +189,18 @@ export default function CowForm({
           });
 
       if (insertError) {
-        console.error(
-          "Cow creation error:",
-          insertError
-        );
+        console.error("Cow creation error:", insertError);
 
-        setError(insertError.message);
+        if (insertError.code === "23505") {
+          setError(
+            "A cow with this tag number already exists on this farm."
+          );
+        } else {
+          setError(
+            `Database error: ${insertError.message}`
+          );
+        }
+
         setLoading(false);
         return;
       }
@@ -368,11 +391,12 @@ export default function CowForm({
 
           <input
             type="date"
+            max={getTodayDate()}
             value={dateOfBirth}
             onChange={(e) =>
               setDateOfBirth(e.target.value)
             }
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
           />
         </div>
 
@@ -464,20 +488,16 @@ export default function CowForm({
             }
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
           >
-            <option value="">
+            <option value="Unknown">
               Not recorded
             </option>
 
-            <option value="Not pregnant">
-              Not pregnant
+            <option value="Open">
+              Open
             </option>
 
             <option value="Pregnant">
               Pregnant
-            </option>
-
-            <option value="Unknown">
-              Unknown
             </option>
           </select>
         </div>

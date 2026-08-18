@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { isFutureDate, getTodayDate } from "@/lib/utils/date";
 
 type Farm = {
   id: string;
@@ -19,7 +20,6 @@ type Cow = {
 };
 
 export default function NewMilkRecordPage() {
-  const supabase = createClient();
   const router = useRouter();
 
   const [farms, setFarms] = useState<Farm[]>([]);
@@ -46,6 +46,8 @@ export default function NewMilkRecordPage() {
   // --------------------------------------------------
 
   useEffect(() => {
+    const supabase = createClient();
+
     async function loadData() {
       setLoading(true);
       setError("");
@@ -75,7 +77,6 @@ export default function NewMilkRecordPage() {
       }
 
       const userFarms = farmData ?? [];
-
       setFarms(userFarms);
 
       if (userFarms.length > 0) {
@@ -119,18 +120,6 @@ export default function NewMilkRecordPage() {
   const farmCows = cows.filter((cow) => cow.farm_id === farmId);
 
   // --------------------------------------------------
-  // Automatically select first cow
-  // --------------------------------------------------
-
-  useEffect(() => {
-    if (farmCows.length > 0) {
-      setCowId(farmCows[0].id);
-    } else {
-      setCowId("");
-    }
-  }, [farmId, farmCows.length]);
-
-  // --------------------------------------------------
   // Calculate total for display
   // --------------------------------------------------
 
@@ -145,6 +134,9 @@ export default function NewMilkRecordPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    // Prevent accidental double submission
+    if (saving) return;
 
     setSaving(true);
     setError("");
@@ -163,6 +155,12 @@ export default function NewMilkRecordPage() {
 
     if (!recordDate) {
       setError("Please select the record date.");
+      setSaving(false);
+      return;
+    }
+
+    if (isFutureDate(recordDate)) {
+      setError("Milk records cannot use a future date.");
       setSaving(false);
       return;
     }
@@ -187,18 +185,15 @@ export default function NewMilkRecordPage() {
       lactation !== null &&
       (!Number.isInteger(lactation) || lactation < 1)
     ) {
-      setError(
-        "Lactation number must be a positive whole number."
-      );
+      setError("Lactation number must be a positive whole number.");
       setSaving(false);
       return;
     }
 
-    // IMPORTANT:
-    // Do NOT send total_litres.
-    // Supabase/PostgreSQL calculates it automatically
-    // because total_litres is a generated column.
+    const supabase = createClient();
 
+    // IMPORTANT:
+    // Do NOT send total_litres. Supabase/PostgreSQL calculates it automatically.
     const { error: insertError } = await supabase
       .from("milk_records")
       .insert({
@@ -212,12 +207,18 @@ export default function NewMilkRecordPage() {
       });
 
     if (insertError) {
-      console.error(
-        "Milk record insert error:",
-        insertError
-      );
+      console.error("Milk record insert error:", insertError);
 
-      setError(insertError.message);
+      if (insertError.code === "23505") {
+        setError(
+          "A milk record for this cow already exists for this date."
+        );
+      } else {
+        setError(
+          "We could not save this milk record. Please check your information and try again."
+        );
+      }
+
       setSaving(false);
       return;
     }
@@ -235,9 +236,7 @@ export default function NewMilkRecordPage() {
       <main className="min-h-screen bg-[#f7f8f3] px-6 py-10">
         <div className="mx-auto max-w-2xl">
           <div className="rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
-            <p className="text-gray-600">
-              Loading your farm data...
-            </p>
+            <p className="text-gray-600">Loading your farm data...</p>
           </div>
         </div>
       </main>
@@ -251,7 +250,6 @@ export default function NewMilkRecordPage() {
   return (
     <main className="min-h-screen bg-[#f7f8f3] px-6 py-10">
       <div className="mx-auto max-w-2xl">
-
         {/* HEADER */}
 
         <div>
@@ -275,11 +273,6 @@ export default function NewMilkRecordPage() {
 
         {farms.length === 0 ? (
           <div className="mt-8 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
-
-            <div className="text-5xl">
-              🌱
-            </div>
-
             <h2 className="mt-4 text-xl font-bold text-gray-900">
               No farm found
             </h2>
@@ -294,18 +287,11 @@ export default function NewMilkRecordPage() {
             >
               Add Farm
             </Link>
-
           </div>
         ) : farmCows.length === 0 ? (
-
           /* NO COWS */
 
           <div className="mt-8 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-gray-200">
-
-            <div className="text-5xl">
-              🐄
-            </div>
-
             <h2 className="mt-4 text-xl font-bold text-gray-900">
               No cows found
             </h2>
@@ -320,20 +306,15 @@ export default function NewMilkRecordPage() {
             >
               Register Cow
             </Link>
-
           </div>
-
         ) : (
-
           /* FORM */
 
           <form
             onSubmit={handleSubmit}
             className="mt-8 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200"
           >
-
             <div className="space-y-6">
-
               {/* FARM */}
 
               <div>
@@ -343,16 +324,19 @@ export default function NewMilkRecordPage() {
 
                 <select
                   value={farmId}
-                  onChange={(e) =>
-                    setFarmId(e.target.value)
-                  }
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                  onChange={(e) => {
+                    const selectedFarmId = e.target.value;
+                    setFarmId(selectedFarmId);
+
+                    const firstCow = cows.find(
+                      (cow) => cow.farm_id === selectedFarmId
+                    );
+                    setCowId(firstCow?.id ?? "");
+                  }}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                 >
                   {farms.map((farm) => (
-                    <option
-                      key={farm.id}
-                      value={farm.id}
-                    >
+                    <option key={farm.id} value={farm.id}>
                       {farm.farm_name}
                     </option>
                   ))}
@@ -369,29 +353,16 @@ export default function NewMilkRecordPage() {
                 <select
                   required
                   value={cowId}
-                  onChange={(e) =>
-                    setCowId(e.target.value)
-                  }
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                  onChange={(e) => setCowId(e.target.value)}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                 >
-                  <option value="">
-                    Select cow
-                  </option>
+                  <option value="">Select cow</option>
 
                   {farmCows.map((cow) => (
-                    <option
-                      key={cow.id}
-                      value={cow.id}
-                    >
-                      {cow.name ||
-                        cow.tag_number ||
-                        "Unnamed cow"}
-                      {cow.tag_number
-                        ? ` — Tag ${cow.tag_number}`
-                        : ""}
-                      {cow.breed
-                        ? ` — ${cow.breed}`
-                        : ""}
+                    <option key={cow.id} value={cow.id}>
+                      {cow.name || cow.tag_number || "Unnamed cow"}
+                      {cow.tag_number ? ` — Tag ${cow.tag_number}` : ""}
+                      {cow.breed ? ` — ${cow.breed}` : ""}
                     </option>
                   ))}
                 </select>
@@ -407,11 +378,10 @@ export default function NewMilkRecordPage() {
                 <input
                   type="date"
                   required
+                  max={getTodayDate()}
                   value={recordDate}
-                  onChange={(e) =>
-                    setRecordDate(e.target.value)
-                  }
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                  onChange={(e) => setRecordDate(e.target.value)}
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                 />
               </div>
 
@@ -427,11 +397,9 @@ export default function NewMilkRecordPage() {
                   min="0"
                   step="0.1"
                   value={morningLitres}
-                  onChange={(e) =>
-                    setMorningLitres(e.target.value)
-                  }
+                  onChange={(e) => setMorningLitres(e.target.value)}
                   placeholder="e.g. 8.5"
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                 />
               </div>
 
@@ -447,11 +415,9 @@ export default function NewMilkRecordPage() {
                   min="0"
                   step="0.1"
                   value={eveningLitres}
-                  onChange={(e) =>
-                    setEveningLitres(e.target.value)
-                  }
+                  onChange={(e) => setEveningLitres(e.target.value)}
                   placeholder="e.g. 7.2"
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                 />
               </div>
 
@@ -483,11 +449,9 @@ export default function NewMilkRecordPage() {
                   min="1"
                   step="1"
                   value={lactationNumber}
-                  onChange={(e) =>
-                    setLactationNumber(e.target.value)
-                  }
+                  onChange={(e) => setLactationNumber(e.target.value)}
                   placeholder="e.g. 2"
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                 />
 
                 <p className="mt-1 text-xs text-gray-500">
@@ -504,15 +468,12 @@ export default function NewMilkRecordPage() {
 
                 <textarea
                   value={notes}
-                  onChange={(e) =>
-                    setNotes(e.target.value)
-                  }
+                  onChange={(e) => setNotes(e.target.value)}
                   rows={4}
                   placeholder="Optional notes about today's production..."
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                 />
               </div>
-
             </div>
 
             {/* ERROR */}
@@ -530,14 +491,10 @@ export default function NewMilkRecordPage() {
               disabled={saving}
               className="mt-8 w-full rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving
-                ? "Saving milk record..."
-                : "Save Milk Record"}
+              {saving ? "Saving milk record..." : "Save Milk Record"}
             </button>
-
           </form>
         )}
-
       </div>
     </main>
   );

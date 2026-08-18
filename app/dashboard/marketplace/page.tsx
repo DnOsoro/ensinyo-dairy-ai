@@ -4,32 +4,32 @@ import { createClient } from "@/lib/supabase/server";
 
 const categories = [
   {
-    icon: "🩺",
+    icon: "",
     title: "Veterinarians",
     description: "Find veterinary professionals for animal health and treatment.",
   },
   {
-    icon: "🥬",
+    icon: "",
     title: "Feed Suppliers",
     description: "Find suppliers of dairy feeds, minerals, hay, silage and supplements.",
   },
   {
-    icon: "🏠",
+    icon: "",
     title: "Cow Shed Builders",
     description: "Find people who build modern, practical and affordable dairy sheds.",
   },
   {
-    icon: "🥛",
+    icon: "",
     title: "Milk Buyers",
     description: "Connect with milk vendors, processors and other buyers.",
   },
   {
-    icon: "🚜",
+    icon: "",
     title: "Farm Services",
     description: "Find people offering transport, silage, machinery and other farm services.",
   },
   {
-    icon: "💊",
+    icon: "",
     title: "Animal Health Suppliers",
     description: "Find trusted suppliers of animal health products and farm essentials.",
   },
@@ -201,7 +201,7 @@ export default async function MarketplacePage() {
           <div className="flex gap-4">
 
             <div className="text-2xl">
-              🚜
+              
             </div>
 
             <div>

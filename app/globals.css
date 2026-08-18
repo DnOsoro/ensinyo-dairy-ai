@@ -1,26 +1,181 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* =========================================================
+     ENSINYO COLOR SYSTEM
+     ========================================================= */
+
+  --background: #f6f8f4;
+  --foreground: #172019;
+
+  --ens-green-950: #123524;
+  --ens-green-900: #17452f;
+  --ens-green-800: #1d5a3c;
+  --ens-green-700: #237047;
+  --ens-green-600: #2d8656;
+  --ens-green-500: #3b9b68;
+
+  --ens-sage-100: #edf5ef;
+  --ens-sage-200: #dcebe0;
+  --ens-sage-300: #c8ddcd;
+
+  --ens-gray-950: #171c19;
+  --ens-gray-900: #202622;
+  --ens-gray-800: #303732;
+  --ens-gray-700: #4b554e;
+  --ens-gray-600: #68736b;
+  --ens-gray-500: #879189;
+  --ens-gray-400: #aeb7b0;
+  --ens-gray-300: #d3d9d4;
+  --ens-gray-200: #e4e8e5;
+  --ens-gray-100: #f0f3f0;
+
+  --ens-white: #ffffff;
+
+  --ens-success: #25834f;
+  --ens-warning: #b7791f;
+  --ens-danger: #c2413b;
+
+  /* =========================================================
+     SURFACES
+     ========================================================= */
+
+  --surface: #ffffff;
+  --surface-soft: #f8faf8;
+  --surface-muted: #f0f4f0;
+
+  /* =========================================================
+     BORDERS
+     ========================================================= */
+
+  --border: #e1e7e2;
+  --border-strong: #cfd8d1;
+
+  /* =========================================================
+     SHADOWS
+     ========================================================= */
+
+  --shadow-sm: 0 1px 2px rgba(23, 32, 25, 0.04);
+
+  --shadow-md:
+    0 4px 12px rgba(23, 32, 25, 0.06);
+
+  --shadow-lg:
+    0 12px 30px rgba(23, 32, 25, 0.08);
+
+  /* =========================================================
+     RADIUS
+     ========================================================= */
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================================================
+   BASE
+   ========================================================= */
+
+html {
+  background: var(--background);
 }
 
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family: var(--font-geist-sans);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+
+input,
+select,
+textarea {
+  color: var(--ens-gray-950);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ens-gray-500);
+  opacity: 1;
+}
+
+select {
+  color: var(--ens-gray-950);
+}
+
+option {
+  color: var(--ens-gray-950);
+  background: var(--ens-white);
+}
+
+/* =========================================================
+   FOCUS ACCESSIBILITY
+   ========================================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--ens-green-600);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   SELECTION
+   ========================================================= */
+
+::selection {
+  background: var(--ens-sage-200);
+  color: var(--ens-green-950);
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ens-gray-300);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ens-gray-400);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
 }

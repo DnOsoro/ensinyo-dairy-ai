@@ -1,30 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-
-type Cow = {
-  id: string;
-  farm_id: string;
-  tag_number: string | null;
-  name: string | null;
-  breed: string | null;
-  sex: string | null;
-  date_of_birth: string | null;
-  color: string | null;
-  weight_kg: number | null;
-  status: string | null;
-  pregnancy_status: string | null;
-  notes: string | null;
-  created_at: string;
-  updated_at: string;
-};
-
-type Farm = {
-  id: string;
-  farm_name: string;
-  location: string | null;
-  county: string | null;
-};
+import DeleteCowButton from "./DeleteCowButton";
 
 export default async function CowProfilePage({
   params,
@@ -179,7 +156,7 @@ export default async function CowProfilePage({
     <main className="min-h-screen bg-[#f7f8f3] px-6 py-10">
       <div className="mx-auto max-w-6xl">
 
-        {/* BACK */}
+        {/* BACK LINK */}
 
         <Link
           href="/dashboard/cows"
@@ -191,12 +168,12 @@ export default async function CowProfilePage({
         {/* HEADER */}
 
         <div className="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 sm:p-8">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
             <div className="flex items-center gap-5">
 
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-4xl">
-                🐄
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-green-100 text-4xl">
+                
               </div>
 
               <div>
@@ -229,6 +206,31 @@ export default async function CowProfilePage({
                 </p>
 
               </div>
+
+            </div>
+
+            {/* MANAGEMENT ACTION BUTTONS */}
+
+            <div className="flex flex-wrap items-start gap-3">
+
+              <Link
+                href={`/dashboard/cows/${cow.id}/edit`}
+                className="inline-flex items-center justify-center rounded-xl bg-green-700 px-5 py-3 font-semibold text-white transition hover:bg-green-800"
+              >
+                Edit Cow
+              </Link>
+
+              <DeleteCowButton
+                cowId={cow.id}
+                cowName={cow.name || "this cow"}
+              />
+
+              <Link
+                href="/dashboard/cows"
+                className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Back to My Cows
+              </Link>
 
             </div>
 
@@ -416,7 +418,7 @@ export default async function CowProfilePage({
             >
 
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-2xl">
-                🥛
+                
               </div>
 
               <h3 className="mt-4 font-bold text-gray-900 group-hover:text-green-700">
@@ -441,7 +443,7 @@ export default async function CowProfilePage({
             >
 
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-2xl">
-                ❤️
+                
               </div>
 
               <h3 className="mt-4 font-bold text-gray-900 group-hover:text-green-700">
@@ -466,7 +468,7 @@ export default async function CowProfilePage({
             >
 
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50 text-2xl">
-                🧬
+                
               </div>
 
               <h3 className="mt-4 font-bold text-gray-900 group-hover:text-green-700">
@@ -491,7 +493,7 @@ export default async function CowProfilePage({
             >
 
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-2xl">
-                📊
+                
               </div>
 
               <h3 className="mt-4 font-bold text-gray-900 group-hover:text-green-700">
@@ -499,7 +501,7 @@ export default async function CowProfilePage({
               </h3>
 
               <p className="mt-1 text-sm leading-6 text-gray-500">
-                Understand this cow's milk, health and overall performance.
+                Understand this cow&apos;s milk, health and overall performance.
               </p>
 
               <div className="mt-4 text-sm font-semibold text-green-700">
@@ -523,7 +525,7 @@ export default async function CowProfilePage({
               <div className="flex items-start gap-4">
 
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-50 text-2xl">
-                  ❤️
+                  
                 </div>
 
                 <div>

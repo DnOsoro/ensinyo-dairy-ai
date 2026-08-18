@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import MilkActions from "./milk-actions";
 
 type Farm = {
   id: string;
@@ -63,7 +64,6 @@ export default async function MilkPage() {
     console.error("Farm loading error:", farmsError);
   }
 
-  // Always work with an array so TypeScript knows it isn't null.
   const userFarms: Farm[] = farms ?? [];
 
   // =========================================================
@@ -96,19 +96,6 @@ export default async function MilkPage() {
 
   // =========================================================
   // 4. GET MILK RECORDS
-  //
-  // IMPORTANT:
-  // milk_records DOES NOT have farm_id.
-  //
-  // We therefore identify ownership through:
-  //
-  // milk_records.cow_id
-  //        ↓
-  // cows.id
-  //        ↓
-  // cows.farm_id
-  //        ↓
-  // farms.owner_id
   // =========================================================
 
   let milkRecords: MilkRecord[] = [];
@@ -169,7 +156,6 @@ export default async function MilkPage() {
       ? totalMilk / milkRecords.length
       : 0;
 
-  // Today's date in YYYY-MM-DD format.
   const today = new Date()
     .toISOString()
     .split("T")[0];
@@ -193,12 +179,8 @@ export default async function MilkPage() {
     <main className="min-h-screen bg-[#f7f8f3] px-6 py-10">
       <div className="mx-auto max-w-6xl">
 
-        {/* =================================================
-            HEADER
-        ================================================= */}
-
+        {/* HEADER */}
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
           <div>
             <Link
               href="/dashboard"
@@ -222,20 +204,11 @@ export default async function MilkPage() {
           >
             + Record Milk
           </Link>
-
         </div>
 
-        {/* =================================================
-            NO FARM
-        ================================================= */}
-
+        {/* NO FARM */}
         {userFarms.length === 0 && (
           <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
-
-            <div className="text-5xl">
-              🌱
-            </div>
-
             <h2 className="mt-4 text-xl font-bold text-gray-900">
               Add your farm first
             </h2>
@@ -251,113 +224,84 @@ export default async function MilkPage() {
             >
               Add Farm
             </Link>
-
           </div>
         )}
 
-        {/* =================================================
-            NO COWS
-        ================================================= */}
+        {/* NO COWS */}
+        {userFarms.length > 0 && cows.length === 0 && (
+          <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
+            <h2 className="mt-4 text-xl font-bold text-gray-900">
+              No cows registered
+            </h2>
 
-        {userFarms.length > 0 &&
-          cows.length === 0 && (
-            <div className="mt-8 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
+            <p className="mx-auto mt-2 max-w-md text-gray-600">
+              Register at least one cow before
+              recording milk production.
+            </p>
 
-              <div className="text-5xl">
-                🐄
-              </div>
+            <Link
+              href="/dashboard/cows/new"
+              className="mt-6 inline-block rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800"
+            >
+              Register Cow
+            </Link>
+          </div>
+        )}
 
-              <h2 className="mt-4 text-xl font-bold text-gray-900">
-                No cows registered
-              </h2>
-
-              <p className="mx-auto mt-2 max-w-md text-gray-600">
-                Register at least one cow before
-                recording milk production.
-              </p>
-
-              <Link
-                href="/dashboard/cows/new"
-                className="mt-6 inline-block rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800"
-              >
-                Register Cow
-              </Link>
-
-            </div>
-          )}
-
-        {/* =================================================
-            SUMMARY CARDS
-        ================================================= */}
-
+        {/* SUMMARY CARDS & RECORDS */}
         {cows.length > 0 && (
           <>
+            {/* COMPACT SUMMARY CARDS */}
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
-
               {/* TODAY */}
-
-              <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-
-                <p className="text-sm font-medium text-gray-500">
-                  Today's Milk
+              <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
+                <p className="text-xs font-medium text-gray-500">
+                  Today&apos;s Milk
                 </p>
 
-                <p className="mt-2 text-3xl font-bold text-gray-900">
+                <p className="mt-1 text-2xl font-bold text-gray-900">
                   {todayMilk.toFixed(2)} L
                 </p>
 
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-0.5 text-xs text-gray-500">
                   {today}
                 </p>
-
               </div>
 
               {/* TOTAL */}
-
-              <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-
-                <p className="text-sm font-medium text-gray-500">
+              <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
+                <p className="text-xs font-medium text-gray-500">
                   Total Recorded
                 </p>
 
-                <p className="mt-2 text-3xl font-bold text-gray-900">
+                <p className="mt-1 text-2xl font-bold text-gray-900">
                   {totalMilk.toFixed(2)} L
                 </p>
 
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-0.5 text-xs text-gray-500">
                   Across all records
                 </p>
-
               </div>
 
               {/* AVERAGE */}
-
-              <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-
-                <p className="text-sm font-medium text-gray-500">
+              <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
+                <p className="text-xs font-medium text-gray-500">
                   Average / Record
                 </p>
 
-                <p className="mt-2 text-3xl font-bold text-gray-900">
+                <p className="mt-1 text-2xl font-bold text-gray-900">
                   {averageMilk.toFixed(2)} L
                 </p>
 
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-0.5 text-xs text-gray-500">
                   Per milk record
                 </p>
-
               </div>
-
             </div>
 
-            {/* =================================================
-                RECENT RECORDS
-            ================================================= */}
-
+            {/* RECENT RECORDS */}
             <div className="mt-8">
-
               <div className="flex items-center justify-between">
-
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">
                     Recent Milk Records
@@ -376,18 +320,11 @@ export default async function MilkPage() {
                       : "records"}
                   </span>
                 )}
-
               </div>
 
               {/* NO RECORDS */}
-
               {milkRecords.length === 0 && (
                 <div className="mt-6 rounded-2xl bg-white p-10 text-center shadow-sm ring-1 ring-gray-200">
-
-                  <div className="text-5xl">
-                    🥛
-                  </div>
-
                   <h3 className="mt-4 text-lg font-bold text-gray-900">
                     No milk records yet
                   </h3>
@@ -403,131 +340,62 @@ export default async function MilkPage() {
                   >
                     Record First Milk
                   </Link>
-
                 </div>
               )}
 
-              {/* RECORD LIST */}
-
+              {/* COMPACT RECORD LIST */}
               {milkRecords.length > 0 && (
-                <div className="mt-6 space-y-4">
+                <div className="mt-6 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-200 divide-y divide-gray-100">
+                  {milkRecords.slice(0, 20).map((record) => {
+                    const cow = cowMap.get(record.cow_id);
 
-                  {milkRecords
-                    .slice(0, 20)
-                    .map((record) => {
-
-                      const cow = cowMap.get(
-                        record.cow_id
-                      );
-
-                      return (
-                        <div
-                          key={record.id}
-                          className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
-                        >
-
-                          {/* RECORD HEADER */}
-
-                          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-
-                            <div>
-
-                              <h3 className="text-lg font-bold text-gray-900">
-                                {cow?.name ||
-                                  "Unnamed Cow"}
-                              </h3>
-
-                              <p className="mt-1 text-sm text-gray-500">
-                                {record.record_date}
-                              </p>
-
-                              {cow?.tag_number && (
-                                <p className="mt-1 text-xs text-gray-500">
-                                  Tag:{" "}
-                                  <span className="font-medium">
-                                    {cow.tag_number}
-                                  </span>
-                                </p>
-                              )}
-
-                            </div>
-
-                            <div className="rounded-xl bg-green-50 px-4 py-2 text-right">
-
-                              <p className="text-xs font-medium text-green-700">
-                                Total
-                              </p>
-
-                              <p className="text-xl font-bold text-green-800">
-                                {Number(
-                                  record.total_litres ?? 0
-                                ).toFixed(2)}{" "}
-                                L
-                              </p>
-
-                            </div>
-
+                    return (
+                      <div key={record.id} className="px-4 py-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-gray-900">
+                              {cow?.name || "Unnamed Cow"}
+                            </p>
+                            <p className="mt-0.5 text-xs text-gray-500">
+                              {record.record_date}
+                              {cow?.tag_number ? ` • Tag ${cow.tag_number}` : ""}
+                            </p>
                           </div>
 
-                          {/* MILK DETAILS */}
-
-                          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-
-                            <div className="rounded-xl bg-gray-50 p-4">
-
-                              <p className="text-xs text-gray-500">
-                                Morning
-                              </p>
-
-                              <p className="mt-1 text-lg font-semibold text-gray-900">
-                                {Number(
-                                  record.morning_litres ?? 0
-                                ).toFixed(2)}{" "}
-                                L
-                              </p>
-
-                            </div>
-
-                            <div className="rounded-xl bg-gray-50 p-4">
-
-                              <p className="text-xs text-gray-500">
-                                Evening
-                              </p>
-
-                              <p className="mt-1 text-lg font-semibold text-gray-900">
-                                {Number(
-                                  record.evening_litres ?? 0
-                                ).toFixed(2)}{" "}
-                                L
-                              </p>
-
-                            </div>
-
-                          </div>
-
-                          {/* NOTES */}
-
-                          {record.notes && (
-                            <div className="mt-4 border-t border-gray-100 pt-4">
-
-                              <p className="text-xs font-medium text-gray-500">
-                                Notes
-                              </p>
-
-                              <p className="mt-1 text-sm text-gray-700">
-                                {record.notes}
-                              </p>
-
-                            </div>
-                          )}
-
+                          <p className="shrink-0 text-sm font-bold text-green-700">
+                            {Number(record.total_litres ?? 0).toFixed(2)} L
+                          </p>
                         </div>
-                      );
-                    })}
 
+                        <div className="mt-3 flex items-center justify-between">
+                          <div className="flex gap-4 text-xs text-gray-600">
+                            <span>
+                              Morning:{" "}
+                              <strong className="text-gray-900">
+                                {Number(record.morning_litres ?? 0).toFixed(2)} L
+                              </strong>
+                            </span>
+                            <span>
+                              Evening:{" "}
+                              <strong className="text-gray-900">
+                                {Number(record.evening_litres ?? 0).toFixed(2)} L
+                              </strong>
+                            </span>
+                          </div>
+
+                          <MilkActions recordId={record.id} />
+                        </div>
+
+                        {record.notes && (
+                          <p className="mt-2 text-xs text-gray-500">
+                            Note: {record.notes}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
-
             </div>
           </>
         )}

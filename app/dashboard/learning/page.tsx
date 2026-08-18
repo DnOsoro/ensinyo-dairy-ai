@@ -8,7 +8,6 @@ const learningResources = [
     description:
       "Learn how to design a comfortable, clean and practical dairy cow shed.",
     category: "Housing",
-    icon: "🏠",
     url: "",
   },
   {
@@ -16,7 +15,6 @@ const learningResources = [
     description:
       "Learn the basic steps for preparing and storing silage for your dairy cows.",
     category: "Feed",
-    icon: "🌽",
     url: "",
   },
   {
@@ -24,7 +22,6 @@ const learningResources = [
     description:
       "Understand the basics of balanced feeding and how good nutrition affects milk production.",
     category: "Nutrition",
-    icon: "🥬",
     url: "",
   },
   {
@@ -32,7 +29,6 @@ const learningResources = [
     description:
       "Learn practical ways to maintain cow health and identify problems early.",
     category: "Animal Health",
-    icon: "❤️",
     url: "",
   },
   {
@@ -40,7 +36,6 @@ const learningResources = [
     description:
       "Understand heat detection, insemination, pregnancy and basic breeding management.",
     category: "Breeding",
-    icon: "🧬",
     url: "",
   },
   {
@@ -48,7 +43,6 @@ const learningResources = [
     description:
       "Learn practical management practices that can help improve milk production and farm efficiency.",
     category: "Milk Production",
-    icon: "🥛",
     url: "",
   },
 ];
@@ -65,7 +59,7 @@ export default async function FarmerLearningPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f8f3]">
+    <main className="min-h-screen bg-[var(--background)]">
 
       {/* =====================================================
           HEADER
@@ -73,7 +67,7 @@ export default async function FarmerLearningPage() {
 
       <header className="border-b bg-white">
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
 
           <div className="flex items-center gap-4">
 
@@ -85,24 +79,14 @@ export default async function FarmerLearningPage() {
               ←
             </Link>
 
-            <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-gray-950">
+                Farmer Learning
+              </h1>
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 text-2xl">
-                🎓
-              </div>
-
-              <div>
-
-                <h1 className="text-xl font-bold text-gray-900">
-                  Farmer Learning
-                </h1>
-
-                <p className="text-sm text-gray-500">
-                  Learn practical modern dairy farming
-                </p>
-
-              </div>
-
+              <p className="text-sm text-gray-500">
+                Learn practical modern dairy farming
+              </p>
             </div>
 
           </div>
@@ -123,7 +107,7 @@ export default async function FarmerLearningPage() {
           MAIN
       ===================================================== */}
 
-      <section className="mx-auto max-w-7xl px-6 py-10">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
 
         {/* INTRO */}
 
@@ -158,10 +142,10 @@ export default async function FarmerLearningPage() {
               className="group rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200 transition hover:-translate-y-1 hover:shadow-md"
             >
 
-              {/* ICON */}
+              {/* CATEGORY MARKER */}
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-3xl">
-                {resource.icon}
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-sm font-bold tracking-wide text-green-700 ring-1 ring-green-100">
+                {resource.category.slice(0, 1)}
               </div>
 
 
